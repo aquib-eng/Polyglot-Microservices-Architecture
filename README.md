@@ -1,3 +1,122 @@
+# 🚀 Creative Interiors – Polyglot Microservices Platform
+
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
+[![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-512BD4?style=for-the-badge&logo=.net&logoColor=white)](https://dotnet.microsoft.com/en-us/apps/aspnet)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com)
+
+Welcome to **Creative Interiors**, a cutting-edge, Dockerized, polyglot microservices-based platform designed for online interior design and product customization. This project showcases a scalable, event-driven architecture leveraging Redis Pub/Sub and a diverse set of backend technologies to deliver a seamless user experience.
+
+## ✨ Features
+
+- **Polyglot Architecture**: Built with multiple programming languages and frameworks for optimal service-specific performance.
+- **Event-Driven Design**: Asynchronous processing using Redis Pub/Sub for decoupled communication.
+- **Containerized Deployment**: Fully Dockerized services for easy scaling and deployment.
+- **Cloud-Native Databases**: Integrated with managed cloud databases for reliability and scalability.
+- **Authentication & Authorization**: Secure OTP-based authentication with JWT tokens.
+- **Real-Time Notifications**: Email notifications and invoice generation for orders.
+- **Modular Services**: Independent microservices for Auth, Products, Cart, Orders, and Notifications.
+
+## 🏗️ Architecture Overview
+
+```
+┌─────────────────────────────┐
+│        CLIENT LAYER         │
+│ ┌─────────────┐  ┌────────┐ │
+│ │ Web (NextJS)│  │ Mobile │ │
+│ └──────┬──────┘  └───┬────┘ │
+└────────┼─────────────┼──────┘
+         │             │
+         │    HTTPS / JWT
+         ▼             ▼
+┌──────────────────────────────┐
+│         API GATEWAY          │
+│ (Nginx)                      │
+│ - Routing & Load Balancing   │
+│ - CORS Handling              │
+│ - Authentication (JWT)       │
+└───────────────┬──────────────┘
+                │
+┌──────────┼────────────────────────────────────────┐
+│          │                │           │           │
+▼          ▼                ▼           ▼           ▼
+┌────────┐ ┌──────────┐   ┌──────────┐ ┌────────┐ ┌────────────┐
+│ Auth   │ │ Product  │   │ Cart     │ │ Order  │ │Notification│
+│Service │ │Service   │   │Service   │ │Service │ │Service     │
+│(Spring)│ │(Node.js) │   │(.NET)    │ │(Node)  │ │(Node.js)   │
+└───┬────┘ └────┬─────┘   └────┬─────┘ └────┬───┘ └────┬───────┘
+    │           │              │           │          │
+    ▼           ▼              ▼           ▼          ▼
+┌──────┐     ┌────────┐     ┌────────┐  ┌────────┐  ┌────────┐
+│MySQL │     │MongoDB │     │Postgre │  │Postgre │  │Redis   │
+│(Auth)│     │(Products)│   │(Cart)  │  │(Orders)│  │(Pub/Sub)│
+└──────┘     └────────┘     └────────┘  └────────┘  └────────┘
+    ▲           │
+    │           ▼
+    │    ┌────────────────┐
+    │    │ Message Broker │
+    │    │ Redis Pub/Sub  │
+    │    │ - Async Events │
+    │    │ - Notifications│
+    │    │ - Analytics    │
+    │    └────────────────┘
+    │
+    ▼
+┌────────────────┐
+│ Redis Cache    │
+│ - OTP Storage  │
+│ - Session Data │
+│ - Product Cache│
+└────────────────┘
+```
+- **Client Layer**: Web (Next.js) and Mobile applications communicating via HTTPS/JWT
+- **API Gateway**: Nginx reverse proxy for routing, load balancing, CORS handling, and JWT authentication
+- **Microservices**:
+  - **Auth Service**: Spring Boot + MySQL + Redis – Handles user registration, OTP verification, JWT issuance, email notifications
+  - **Product Service**: Node.js + Express + MongoDB – Manages product catalogues, categories, and materials
+  - **Cart Service**: ASP.NET Core + PostgreSQL (EF Core) – Handles shopping cart operations and item management
+  - **Order Service**: Node.js + Express + PostgreSQL (Prisma) – Processes orders and publishes events
+  - **Notification Service**: Node.js + Redis Pub/Sub – Consumes events to send emails and generate PDF invoices
+- **Message Broker**: Redis Pub/Sub for asynchronous event processing
+- **Cache**: Redis for OTP storage, session data, and product caching
+- **Containerization**: Docker for all services
+- **Orchestration**: Docker Compose for local development
+- **Cloud Databases**:
+  - MySQL: Aiven
+  - PostgreSQL: Neon/Aiven
+  - MongoDB: Atlas
+  - Redis: Upstash
+## 📁 Project Structure
+
+```
+creative-microservices/
+│
+├── api-gateway/
+│   ├── Dockerfile
+│   └── gateway.conf          # Nginx configuration
+│
+├── auth-service/
+│   ├── Dockerfile
+│   ├── pom.xml               # Spring Boot dependencies
+│   └── src/                  # Java source code
+│
+├── product-service/
+│   ├── Dockerfile
+│   ├── package.json          # Node.js dependencies
+│   └── src/                  # Express app with modules for catalogues, categories, materials
+│
+├── cart-service/
+│   ├── Dockerfile
+│   ├── CartService.csproj    # .NET project file
+│   └── Controllers/          # ASP.NET Core controllers
+│
+├── order-service/
+│   ├── Dockerfile
+│   ├── package.json          # Node.js dependencies
 │   ├── prisma/               # Database schema and migrations
 │   └── src/                  # Express app with order management
 │
@@ -101,7 +220,7 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **tusharDevelops** - *Initial work* - [GitHub](https://github.com/tusharDevelops)
+- **aquib-eng** - *Initial work* - [GitHub](https://github.com/aquib-eng)
 
 ## 🙏 Acknowledgments
 
